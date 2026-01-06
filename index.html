@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coach Chris CRC</title>
     
-    <!-- PWA Meta Tags -->
+    <!-- 1. PWA META TAGS (Mobile Optimization) -->
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WOD Gen">
     
-    <!-- App Icons -->
+    <!-- 2. APP ICONS (iOS & Android) -->
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/CoachChrisCRC-AppIcon.png">
     
-    <!-- Manifest Data URI (Self-Contained PWA) -->
+    <!-- 3. MANIFEST DATA URI (Self-Contained PWA) -->
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22WOD%20Generator%20Coach%20Chris%22,%22short_name%22:%22WOD%20Gen%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23000000%22,%22theme_color%22:%22%23000000%22,%22icons%22:[{%22src%22:%22https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/CoachChrisCRC-AppIcon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]} " />
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -103,25 +103,57 @@
         </div>
     </div>
 
-    <script>
-        // --- SERVICE WORKER REGISTRATION (PWA) ---
+    <script type="module">
+        /**
+         * SERVICE WORKER REGISTRATION (Blob-based for PWA functionality)
+         */
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
                     const CACHE_NAME = 'coach-chris-wod-v1';
+                    
                     self.addEventListener('install', (event) => {
-                        event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
+                        event.waitUntil(
+                            caches.open(CACHE_NAME).then((cache) => {
+                                return cache.addAll(['./']);
+                            })
+                        );
                     });
+
                     self.addEventListener('fetch', (event) => {
-                        event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
+                        event.respondWith(
+                            caches.match(event.request).then((response) => {
+                                return response || fetch(event.request);
+                            })
+                        );
+                    });
+
+                    self.addEventListener('activate', (event) => {
+                        event.waitUntil(
+                            caches.keys().then((cacheNames) => {
+                                return Promise.all(
+                                    cacheNames.filter(name => name !== CACHE_NAME)
+                                              .map(name => caches.delete(name))
+                                );
+                            })
+                        );
                     });
                 `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const workerUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(workerUrl).catch(err => console.log('SW failed', err));
+                
+                try {
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const workerUrl = URL.createObjectURL(blob);
+                    navigator.serviceWorker.register(workerUrl)
+                        .then(reg => console.log('PWA Registered'))
+                        .catch(err => console.error('PWA Registration failed:', err));
+                } catch (e) {
+                    console.error('Service Worker Blob failed.', e);
+                }
             });
         }
+    </script>
 
+    <script>
         lucide.createIcons();
 
         const skipBtn = document.getElementById('skip-btn');
