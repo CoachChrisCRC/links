@@ -10,13 +10,13 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="WOD Gen">
+    <meta name="apple-mobile-web-app-title" content="Coach Chris">
     
     <!-- App Icons -->
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/WodGenerator-AppIcon.png">
     
     <!-- Robust Manifest Data URI -->
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22WOD%20Generator%20Coach%20Chris%22,%22short_name%22:%22WOD%20Gen%22,%22description%22:%22Professional%20WOD%20Generator%20by%20Coach%20Chris%22,%22start_url%22:%22./%22,%22scope%22:%22./%22,%22display%22:%22standalone%22,%22orientation%22:%22portrait%22,%22background_color%22:%22%23000000%22,%22theme_color%22:%22%23000000%22,%22icons%22:[{%22src%22:%22https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/WodGenerator-AppIcon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]} " />
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Coach%20Chris%20CRC%22,%22short_name%22:%22CoachChris%22,%22description%22:%22Professional%20Training%20Hub%20by%20Coach%20Chris%22,%22start_url%22:%22./%22,%22scope%22:%22./%22,%22display%22:%22standalone%22,%22orientation%22:%22portrait%22,%22background_color%22:%22%23000000%22,%22theme_color%22:%22%23000000%22,%22icons%22:[{%22src%22:%22https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/WodGenerator-AppIcon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]} " />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -69,29 +69,31 @@
             border-width: 4px;
         }
 
-        /* Install Prompt Custom UI (Fallback) */
+        /* Install Prompt Custom UI */
         #install-prompt {
             display: none;
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             background: black;
             color: white;
-            padding: 12px 24px;
+            padding: 16px 32px;
             border-radius: 50px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             z-index: 1000;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        #install-prompt:active { transform: translateX(-50%) scale(0.95); }
     </style>
 </head>
 <body>
 
-    <button id="install-prompt">Install App</button>
+    <button id="install-prompt">Install Coach Chris App</button>
 
     <div class="flex flex-col items-center text-center p-8 w-full max-sm:max-w-xs">
         <div id="main-icon" class="mb-12 transition-all duration-1000 scale-[0.7] -translate-y-[20px] opacity-50">
@@ -131,12 +133,10 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // We use a data URI for the service worker to keep it single-file, 
-                // but we ensure the manifest points correctly to current directory.
                 const swCode = `
                     const CACHE_NAME = 'coach-chris-v2';
                     self.addEventListener('install', (e) => {
-                        e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(['/'])));
+                        e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(['./'])));
                     });
                     self.addEventListener('fetch', (e) => {
                         e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
@@ -145,27 +145,41 @@
                 const blob = new Blob([swCode], { type: 'application/javascript' });
                 const workerUrl = URL.createObjectURL(blob);
                 navigator.serviceWorker.register(workerUrl).then(reg => {
-                    console.log('SW Registered');
-                }).catch(err => console.log('SW Failed', err));
+                    console.log('Service Worker Registered');
+                }).catch(err => console.log('SW Registration Failed', err));
             });
         }
 
         // Listen for the "Install" event
         window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault();
+            // Stash the event so it can be triggered later.
             deferredPrompt = e;
+            // Update UI notify the user they can install the PWA
             installBtn.style.display = 'block';
         });
 
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
+                // Show the prompt
                 deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
                     installBtn.style.display = 'none';
+                } else {
+                    console.log('User dismissed the install prompt');
                 }
                 deferredPrompt = null;
             }
+        });
+
+        // Hide install button if app is already installed
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('Application was installed.');
+            installBtn.style.display = 'none';
         });
 
         // UI Logic
