@@ -6,7 +6,7 @@
     <title>Coach Chris CRC</title>
     <meta name="theme-color" content="#121412">
     
-    <!-- PWA Manifest Data URI with higher resolution icon placeholders -->
+    <!-- PWA Manifest Data URI -->
     <link rel="manifest" href='data:application/json,{"name":"Coach Chris CRC","short_name":"ChrisCRC","start_url":"index.html","display":"standalone","background_color":"#121412","theme_color":"#808a5c","icons":[{"src":"https://via.placeholder.com/512/808a5c/ffffff?text=CRC","sizes":"512x512","type":"image/png"}]}'>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,7 +29,6 @@
             height: 100vh; 
         }
 
-        /* Glassmorphism effects */
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -37,7 +36,6 @@
             border-radius: 24px;
         }
 
-        /* Heartrate Pulse */
         .heartrate-path {
             stroke-dasharray: 120;
             stroke-dashoffset: 120;
@@ -45,7 +43,6 @@
         }
         @keyframes move-right { 0% { stroke-dashoffset: 120; } 100% { stroke-dashoffset: -120; } }
 
-        /* Loader Bar */
         .bar-container { 
             width: 240px; 
             height: 3px; 
@@ -61,7 +58,6 @@
             box-shadow: 0 0 15px var(--olive); 
         }
 
-        /* QR Code Styling */
         #qrcode img {
             margin: 0 auto;
             border: 4px solid #fff;
@@ -70,7 +66,6 @@
             background: #fff;
         }
 
-        /* Animations */
         .fade-in { animation: fadeIn 0.8s ease-out forwards; }
         .slide-up { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
         
@@ -84,7 +79,6 @@
 
     <div class="flex flex-col items-center text-center p-8 w-full max-w-sm">
         
-        <!-- Animated Icon -->
         <div id="main-icon" class="mb-12 transition-all duration-1000">
             <div class="relative flex items-center justify-center bg-zinc-900/50 rounded-full w-32 h-32 border border-olive/20 shadow-[0_0_40px_rgba(128,138,92,0.1)]">
                 <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#808a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -94,15 +88,13 @@
             </div>
         </div>
 
-        <!-- Branding Section -->
         <div id="branding" class="mb-8">
             <h1 class="text-4xl font-black uppercase tracking-tighter mb-2">
                 Coach Chris <span class="text-[#808a5c]">CRC</span>
             </h1>
-            <p class="text-zinc-500 text-[9px] uppercase tracking-[0.4em] font-bold">Protocol Initialization</p>
+            <p id="sub-label" class="text-zinc-500 text-[9px] uppercase tracking-[0.4em] font-bold">Protocol Initialization</p>
         </div>
 
-        <!-- Initial Loader UI -->
         <div id="loader-ui" class="w-full flex flex-col items-center">
             <div class="bar-container mb-6">
                 <div id="progress-bar"></div>
@@ -110,27 +102,22 @@
             <div id="status-text" class="text-[9px] text-zinc-600 font-mono uppercase tracking-widest">Scanning Vitals...</div>
         </div>
 
-        <!-- Post-Load Dashboard (Hidden initially) -->
         <div id="dashboard-ui" class="hidden-el w-full flex flex-col items-center">
-            
             <div class="glass-panel p-6 w-full mb-6">
                 <div id="qrcode" class="mb-4"></div>
                 <p class="text-[10px] text-zinc-400 uppercase tracking-widest leading-relaxed">Scan to share or open<br>on another device</p>
             </div>
-
             <button id="install-btn" class="w-full bg-[#808a5c] text-white py-4 rounded-2xl font-black text-[11px] tracking-[0.2em] uppercase shadow-xl shadow-olive/20 hover:brightness-110 active:scale-95 transition-all">
                 Install App & Launch
             </button>
-            
             <button id="skip-btn" class="mt-6 text-zinc-500 text-[9px] uppercase tracking-[0.3em] font-bold hover:text-olive transition-colors">
                 Continue to site
             </button>
         </div>
-
     </div>
 
     <script>
-        // PWA Service Worker
+        // Inline Service Worker for PWA functionality
         const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));`;
         const swBlob = new Blob([swCode], {type: 'application/javascript'});
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register(URL.createObjectURL(swBlob)); }
@@ -157,7 +144,10 @@
 
         let deferredPrompt;
         let width = 0;
+        
+        // Adaptive speed: Standalone (App) users get a fast 1s load. Browser users get a slower 3s load.
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const progressIncrement = isStandalone ? 4.0 : 1.2; 
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -165,13 +155,12 @@
         });
 
         function showDashboard() {
-            // If already PWA or mobile browser with no install support, just go to site
-            if (isStandalone || (!deferredPrompt && window.innerWidth < 768)) {
+            // Skip dashboard if already installed
+            if (isStandalone) {
                 window.location.replace(targetUrl);
                 return;
             }
 
-            // Execute polished transition
             loaderUi.classList.add('hidden');
             mainIcon.style.transform = 'scale(0.7) translateY(-20px)';
             mainIcon.style.opacity = '0.5';
@@ -190,7 +179,6 @@
                 deferredPrompt = null;
                 window.location.replace(targetUrl);
             } else {
-                // Fallback for iOS/Other
                 window.location.replace(targetUrl);
             }
         });
@@ -198,7 +186,7 @@
         skipBtn.addEventListener('click', () => window.location.replace(targetUrl));
 
         function simulateProgress() {
-            width += Math.random() * 5;
+            width += Math.random() * progressIncrement;
             if (width >= 100) {
                 width = 100;
                 progressBar.style.width = '100%';
