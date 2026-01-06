@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coach Chris CRC</title>
     <meta name="theme-color" content="#121412">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <!-- PWA Manifest Link -->
-    <link rel="manifest" href="manifest.json">
+    <!-- Inline PWA Manifest -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Coach Chris CRC","short_name":"CoachChris","start_url":"./index.html","display":"standalone","background_color":"#121412","theme_color":"#121412","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3034/3034875.png","sizes":"512x512","type":"image/png"}]}'>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -126,14 +128,13 @@
     </div>
 
     <script>
+        // --- PWA INTEGRATION ---
         let deferredPrompt;
         const installBtn = document.getElementById('install-btn');
 
-        // Listen for the install prompt event
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Enable button
             installBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             installBtn.style.opacity = '1';
         });
@@ -142,23 +143,28 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted install');
-                }
                 deferredPrompt = null;
                 installBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
         });
 
-        // Register Service Worker
+        // Inline Service Worker Generation
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW Registered'))
-                    .catch(err => console.error('SW Registration failed', err));
-            });
+            const swCode = `
+                const CACHE_NAME = 'coach-chris-v1';
+                self.addEventListener('install', (e) => {
+                    e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./', 'https://cdn.tailwindcss.com'])));
+                });
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(console.error);
         }
 
+        // --- ORIGINAL SITE LOGIC ---
         const qrContainer = document.getElementById("qrcode");
         new QRCode(qrContainer, {
             text: window.location.href,
