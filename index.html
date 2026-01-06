@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coach Chris CRC</title>
     <meta name="theme-color" content="#121412">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ChrisCRC">
     
-    <!-- PWA Manifest Data URI -->
-    <link rel="manifest" href='data:application/json,{"name":"Coach Chris CRC","short_name":"ChrisCRC","start_url":"index.html","display":"standalone","background_color":"#121412","theme_color":"#808a5c","icons":[{"src":"https://via.placeholder.com/512/808a5c/ffffff?text=CRC","sizes":"512x512","type":"image/png"}]}'>
+    <!-- PWA Manifest for Native Installation -->
+    <link rel="manifest" href='data:application/json,{"name":"Coach Chris CRC","short_name":"ChrisCRC","start_url":".","display":"standalone","background_color":"#121412","theme_color":"#808a5c","description":"Fitter. Stronger. Better. Coach Chris CRC Training Protocol.","icons":[{"src":"https://via.placeholder.com/192/808a5c/ffffff?text=CRC","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"https://via.placeholder.com/512/808a5c/ffffff?text=CRC","sizes":"512x512","type":"image/png"}]}'>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
@@ -66,12 +68,8 @@
             background: #fff;
         }
 
-        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
         .slide-up { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
         .hidden-el { display: none; opacity: 0; }
     </style>
 </head>
@@ -117,9 +115,20 @@
     </div>
 
     <script>
-        const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));`;
-        const swBlob = new Blob([swCode], {type: 'application/javascript'});
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register(URL.createObjectURL(swBlob)); }
+        // Registration of Service Worker for PWA install eligibility
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'crc-cache-v1';
+                self.addEventListener('install', (event) => {
+                    event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
+                });
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+                });
+            `;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: './' });
+        }
 
         const qrContainer = document.getElementById("qrcode");
         new QRCode(qrContainer, {
@@ -142,15 +151,11 @@
 
         let deferredPrompt;
         let width = 0;
-        
         const progressIncrement = 12.0; 
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-        // Listener for the install prompt event
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             deferredPrompt = e;
         });
 
@@ -159,11 +164,9 @@
                 window.location.replace(targetUrl);
                 return;
             }
-
             loaderUi.classList.add('hidden');
             mainIcon.style.transform = 'scale(0.7) translateY(-20px)';
             mainIcon.style.opacity = '0.5';
-            
             dashboardUi.style.display = 'flex';
             setTimeout(() => {
                 dashboardUi.style.opacity = '1';
@@ -171,20 +174,13 @@
             }, 50);
         }
 
-        // Action when clicking the Install Button
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
-                // Show the browser's install prompt
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
                 const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to the install prompt: ${outcome}`);
-                // We've used the prompt, and can't use it again, throw it away
                 deferredPrompt = null;
-                // Redirect regardless of outcome to maintain flow
-                window.location.replace(targetUrl);
+                if (outcome === 'accepted') window.location.replace(targetUrl);
             } else {
-                // If the prompt isn't available (e.g. iOS or already shown), just redirect
                 window.location.replace(targetUrl);
             }
         });
