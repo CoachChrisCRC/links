@@ -53,7 +53,7 @@
         #progress-bar { 
             width: 0%; 
             height: 100%; 
-            transition: width 0.1s ease-out; 
+            transition: width 0.05s ease-out; 
             background: var(--olive);
             box-shadow: 0 0 15px var(--olive); 
         }
@@ -77,7 +77,7 @@
 </head>
 <body>
 
-    <div class="flex flex-col items-center text-center p-8 w-full max-w-sm">
+    <div class="flex flex-col items-center text-center p-8 w-full max-sm:max-w-xs">
         
         <div id="main-icon" class="mb-12 transition-all duration-1000">
             <div class="relative flex items-center justify-center bg-zinc-900/50 rounded-full w-32 h-32 border border-olive/20 shadow-[0_0_40px_rgba(128,138,92,0.1)]">
@@ -102,7 +102,6 @@
             <div id="status-text" class="text-[9px] text-zinc-600 font-mono uppercase tracking-widest">Scanning Vitals...</div>
         </div>
 
-        <!-- Post-Load Dashboard -->
         <div id="dashboard-ui" class="hidden-el w-full flex flex-col items-center">
             <div class="glass-panel p-6 w-full mb-6">
                 <div id="qrcode" class="mb-4"></div>
@@ -118,12 +117,10 @@
     </div>
 
     <script>
-        // Inline Service Worker
         const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));`;
         const swBlob = new Blob([swCode], {type: 'application/javascript'});
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register(URL.createObjectURL(swBlob)); }
 
-        // Setup QR Code
         const qrContainer = document.getElementById("qrcode");
         new QRCode(qrContainer, {
             text: window.location.href,
@@ -146,25 +143,23 @@
         let deferredPrompt;
         let width = 0;
         
-        // Original fast loading speed
-        const progressIncrement = 4.5; 
-        
-        // Detect if already installed/running as standalone PWA
+        const progressIncrement = 12.0; 
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
+        // Listener for the install prompt event
         window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
+            // Stash the event so it can be triggered later.
             deferredPrompt = e;
         });
 
         function handleCompletion() {
-            // IF ALREADY INSTALLED: Skip the dashboard and redirect immediately
             if (isStandalone) {
                 window.location.replace(targetUrl);
                 return;
             }
 
-            // IF IN BROWSER: Show dashboard with Install/QR options
             loaderUi.classList.add('hidden');
             mainIcon.style.transform = 'scale(0.7) translateY(-20px)';
             mainIcon.style.opacity = '0.5';
@@ -176,13 +171,20 @@
             }, 50);
         }
 
+        // Action when clicking the Install Button
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
+                // Show the browser's install prompt
                 deferredPrompt.prompt();
-                await deferredPrompt.userChoice;
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // We've used the prompt, and can't use it again, throw it away
                 deferredPrompt = null;
+                // Redirect regardless of outcome to maintain flow
                 window.location.replace(targetUrl);
             } else {
+                // If the prompt isn't available (e.g. iOS or already shown), just redirect
                 window.location.replace(targetUrl);
             }
         });
@@ -195,16 +197,16 @@
                 width = 100;
                 progressBar.style.width = '100%';
                 statusText.innerText = "Connection Established";
-                setTimeout(handleCompletion, 800);
+                setTimeout(handleCompletion, 400);
             } else {
                 progressBar.style.width = width + '%';
                 const phases = ["Syncing", "Authenticating", "Loading Vitals", "Finalizing"];
-                statusText.innerText = `${phases[Math.floor(width/26)]} // ${Math.floor(width)}%`;
-                setTimeout(() => requestAnimationFrame(simulateProgress), 40);
+                statusText.innerText = `${phases[Math.floor(width/26)] || "Finalizing"} // ${Math.floor(width)}%`;
+                setTimeout(() => requestAnimationFrame(simulateProgress), 20);
             }
         }
 
-        window.onload = () => setTimeout(simulateProgress, 800);
+        window.onload = () => setTimeout(simulateProgress, 300);
     </script>
 </body>
 </html>
