@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coach Chris CRC</title>
-    <!-- PWA Primary Meta Tags -->
+    
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#121412">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Coach Chris">
     
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/WodGenerator-AppIcon.png">
+    
+    <!-- Manifest Data URI (Self-Contained PWA) -->
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Coach%20Chris%20CRC%22,%22short_name%22:%22CoachChris%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23121412%22,%22theme_color%22:%22%23121412%22,%22icons%22:[{%22src%22:%22https://raw.githubusercontent.com/coachchriscrc/WodGenerator/main/WodGenerator-AppIcon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]} " />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        :root { --olive: #808a5c; --bg: #121412; --launch-overlay: rgba(18, 20, 18, 0.95); }
+        :root { --olive: #808a5c; --bg: #121412; }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: var(--bg); 
-            color: #fff; 
+            background-color: #ffffff; 
+            color: #000; 
             overflow: hidden; 
             margin: 0; 
             display: flex; 
@@ -45,21 +52,6 @@
         }
         @keyframes move-right { 0% { stroke-dashoffset: 120; } 100% { stroke-dashoffset: -120; } }
 
-        .bar-container { 
-            width: 240px; 
-            height: 3px; 
-            background: rgba(128, 138, 92, 0.1); 
-            border-radius: 10px; 
-            overflow: hidden; 
-        }
-        #progress-bar { 
-            width: 0%; 
-            height: 100%; 
-            transition: width 0.05s ease-out; 
-            background: var(--olive);
-            box-shadow: 0 0 15px var(--olive); 
-        }
-
         #qrcode img {
             margin: 0 auto;
             border: 4px solid #fff;
@@ -70,65 +62,18 @@
 
         .slide-up { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .hidden-el { display: none; opacity: 0; }
         
-        #branding h1, #branding p, #status-text {
-            transition: color 0.1s linear;
-        }
-
         #icon-container {
-            transition: border-color 0.1s linear;
-            border-color: rgba(0, 0, 0, 0);
+            border-color: rgba(0, 0, 0, 1);
             border-width: 4px;
-        }
-
-        /* Launch Overlay Styles */
-        #launch-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background-color: var(--launch-overlay);
-            backdrop-filter: blur(12px);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        #launch-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        #launch-icon-container {
-            color: var(--olive);
-            animation: pulse-scale 1.2s infinite ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes pulse-scale {
-            0% { transform: scale(0.85); opacity: 0.3; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.85); opacity: 0.3; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Minimal Loading Overlay -->
-    <div id="launch-overlay">
-        <div id="launch-icon-container">
-            <i data-lucide="zap" class="w-16 h-16"></i>
-        </div>
-    </div>
-
     <div class="flex flex-col items-center text-center p-8 w-full max-sm:max-w-xs">
         
-        <div id="main-icon" class="mb-12 transition-all duration-1000">
+        <div id="main-icon" class="mb-12 transition-all duration-1000 scale-[0.7] -translate-y-[20px] opacity-50">
             <div id="icon-container" class="relative flex items-center justify-center bg-zinc-400/10 rounded-full w-32 h-32 border shadow-[0_0_40px_rgba(128,138,92,0.1)]">
                 <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#808a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M0 12h2l1.5-4 1.5 8 2-14 2.5 20 2-10 2 4h10.5" opacity="0.1"></path>
@@ -141,26 +86,16 @@
             <h1 class="text-4xl font-black uppercase tracking-tighter mb-2">
                 Coach Chris <span class="text-[#808a5c]">CRC</span>
             </h1>
-            <p id="sub-label" class="text-zinc-500 text-[9px] uppercase tracking-[0.4em] font-bold">Protocol Initialization</p>
+            <p id="sub-label" class="text-black text-[9px] uppercase tracking-[0.4em] font-bold">FITTER. STRONGER. BETTER.</p>
         </div>
 
-        <div id="loader-ui" class="w-full flex flex-col items-center">
-            <div class="bar-container mb-6">
-                <div id="progress-bar"></div>
-            </div>
-            <div id="status-text" class="text-[9px] text-zinc-600 font-mono uppercase tracking-widest">Scanning Vitals...</div>
-        </div>
-
-        <div id="dashboard-ui" class="hidden-el w-full flex flex-col items-center">
+        <div id="dashboard-ui" class="flex w-full flex-col items-center slide-up">
             <div class="glass-panel p-6 w-full mb-6">
                 <div id="qrcode" class="mb-4"></div>
                 <p id="qr-label" class="text-[10px] text-zinc-400 uppercase tracking-widest leading-relaxed">Scan to share or open<br>on another device</p>
             </div>
             
             <div class="flex gap-3 w-full">
-                <button id="install-btn" class="flex-1 bg-[#808a5c] text-white py-4 rounded-2xl font-black text-[9px] tracking-[0.05em] uppercase shadow-xl shadow-olive/20 hover:brightness-110 active:scale-95 transition-all opacity-50 cursor-not-allowed">
-                    Install App
-                </button>
                 <button id="skip-btn" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-2xl font-black text-[9px] tracking-[0.05em] uppercase hover:bg-zinc-700 active:scale-95 transition-all">
                     Continue with Browser
                 </button>
@@ -169,102 +104,34 @@
     </div>
 
     <script>
-        lucide.createIcons();
-
-        // --- PWA Support & Custom Configuration ---
-        const PWA_CONFIG = {
-            name: "Coach Chris CRC",
-            shortName: "Coach Chris",
-            iconUrl: "icon-512.png" 
-        };
-
-        // 1. Generate Manifest dynamically
-        const manifest = {
-            "name": PWA_CONFIG.name,
-            "short_name": PWA_CONFIG.shortName,
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#121412",
-            "theme_color": "#808a5c",
-            "description": "Coach Chris CRC Performance Dashboard",
-            "icons": [
-                {
-                    "src": PWA_CONFIG.iconUrl,
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                }
-            ]
-        };
-        
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        
-        const manifestTag = document.createElement('link');
-        manifestTag.rel = 'manifest';
-        manifestTag.href = manifestURL;
-        document.head.appendChild(manifestTag);
-
-        const appleIconTag = document.createElement('link');
-        appleIconTag.rel = 'apple-touch-icon';
-        appleIconTag.href = PWA_CONFIG.iconUrl;
-        document.head.appendChild(appleIconTag);
-
-        // 2. Register Service Worker
+        // --- SERVICE WORKER REGISTRATION (PWA) ---
         if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('install', (e) => self.skipWaiting());
-                self.addEventListener('fetch', (e) => {
-                    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-                });
-            `;
-            const swBlob = new Blob([swCode], {type: 'text/javascript'});
-            const swUrl = URL.createObjectURL(swBlob);
-            navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Error", err));
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'coach-chris-crc-v1';
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
+                    });
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
+                    });
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const workerUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(workerUrl).catch(err => console.log('SW failed', err));
+            });
         }
 
-        // PWA Installation UI Logic
-        let deferredPrompt;
-        const installBtn = document.getElementById('install-btn');
+        // Initialize icons
+        lucide.createIcons();
+
+        // Redirect logic
         const skipBtn = document.getElementById('skip-btn');
-        const launchOverlay = document.getElementById('launch-overlay');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
-            e.preventDefault();
-            // Stash the event so it can be triggered later.
-            deferredPrompt = e;
-            // Update UI to notify the user they can add to home screen
-            installBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            installBtn.style.opacity = '1';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                // Show the browser's native add to home screen / install prompt
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log('User response to install prompt:', outcome);
-                deferredPrompt = null;
-                installBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                // Fallback for iOS or browsers where prompt isn't supported/fired yet
-                // Most browsers will show their manual 'Add to Home Screen' if the user uses the menu
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                if (isIOS) {
-                    alert("To install: tap the 'Share' icon and select 'Add to Home Screen'.");
-                }
-            }
-        });
-
-        // Continue Logic with Launch Overlay
         skipBtn.addEventListener('click', () => {
-            launchOverlay.classList.add('active');
-            setTimeout(() => { window.location.replace("https://coachchriscrc.carrd.co"); }, 1200);
+            window.location.href = "https://coachchriscrc.carrd.co";
         });
 
-        // Theme & UI Logic
+        // Generate QR Code for current URL
         const qrContainer = document.getElementById("qrcode");
         new QRCode(qrContainer, {
             text: window.location.href,
@@ -275,58 +142,12 @@
             correctLevel : QRCode.CorrectLevel.H
         });
 
-        const progressBar = document.getElementById('progress-bar');
-        const statusText = document.getElementById('status-text');
-        const loaderUi = document.getElementById('loader-ui');
-        const dashboardUi = document.getElementById('dashboard-ui');
-        const mainIcon = document.getElementById('main-icon');
-        const iconContainer = document.getElementById('icon-container');
-        const subLabel = document.getElementById('sub-label');
-
-        let width = 0;
-        const progressIncrement = 12.0; 
-
-        function updateTheme(p) {
-            const bgVal = Math.floor(18 + (237 * p)); 
-            const textVal = Math.floor(255 - (255 * p)); 
-            document.body.style.backgroundColor = `rgb(${bgVal}, ${bgVal}, ${bgVal})`;
-            document.body.style.color = `rgb(${textVal}, ${textVal}, ${textVal})`;
-            iconContainer.style.borderColor = `rgba(0, 0, 0, ${p})`;
-            const zincShade = Math.floor(113 + (50 * p)); 
-            subLabel.style.color = `rgb(${zincShade - (zincShade * p)}, ${zincShade - (zincShade * p)}, ${zincShade - (zincShade * p)})`;
-        }
-
-        function handleCompletion() {
-            loaderUi.classList.add('hidden');
-            subLabel.innerText = "FITTER. STRONGER. BETTER.";
-            mainIcon.style.transform = 'scale(0.7) translateY(-20px)';
-            mainIcon.style.opacity = '0.5';
-            dashboardUi.style.display = 'flex';
-            setTimeout(() => {
-                dashboardUi.style.opacity = '1';
-                dashboardUi.classList.add('slide-up');
-            }, 50);
-        }
-
-        function simulateProgress() {
-            width += Math.random() * progressIncrement;
-            if (width >= 100) {
-                width = 100;
-                progressBar.style.width = '100%';
-                updateTheme(1);
-                statusText.innerText = "Connection Established";
-                setTimeout(handleCompletion, 400);
-            } else {
-                progressBar.style.width = width + '%';
-                updateTheme(width / 100);
-                const phases = ["Syncing", "Authenticating", "Loading Vitals", "Finalizing"];
-                statusText.innerText = `${phases[Math.floor(width/26)] || "Finalizing"} // ${Math.floor(width)}%`;
-                setTimeout(() => requestAnimationFrame(simulateProgress), 20);
-            }
-        }
-
+        // Animation load
         window.onload = () => {
-            setTimeout(simulateProgress, 300);
+            const mainIcon = document.getElementById('main-icon');
+            setTimeout(() => {
+                mainIcon.classList.remove('scale-[0.7]', '-translate-y-[20px]', 'opacity-50');
+            }, 100);
         };
     </script>
 </body>
