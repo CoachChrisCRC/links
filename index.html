@@ -220,23 +220,24 @@
         // Splash Screen & Transition Handling
         window.addEventListener('load', () => {
             if (isStandalone) {
-                // Update button for installed state
+                // Prepare button for "Continue" state
                 skipBtn.innerText = "Continue";
                 
-                // Keep splash screen visible and trigger the link
+                // Immediately open the external link while splash remains visible
                 setTimeout(() => {
                     window.location.href = EXTERNAL_URL;
                 }, 1000);
 
-                // Reveal dashboard ONLY when user focuses back on the app 
-                // (e.g., after the browser window is closed)
+                // Reveal dashboard when user returns focus to the PWA 
+                // (e.g., after the browser/link window is closed)
                 window.addEventListener('focus', () => {
-                    if (splash.style.visibility !== 'hidden') {
+                    // Check if we haven't already faded out the splash
+                    if (!splash.classList.contains('fade-out')) {
                         revealDashboard();
                     }
                 }, { once: true });
             } else {
-                // Regular browser users see the dashboard immediately after splash
+                // Standard browser experience
                 setTimeout(revealDashboard, 1000);
             }
         });
@@ -248,7 +249,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'coach-chris-v4';
+                    const CACHE_NAME = 'coach-chris-v5';
                     self.addEventListener('install', (e) => {
                         e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(['./'])));
                     });
