@@ -146,6 +146,7 @@
             color: #a1a1aa;
             pointer-events: none;
             user-select: none;
+            transition: opacity 0.2s ease;
         }
 
         /* QR Code Styles */
@@ -304,7 +305,7 @@
                 <div class="swipe-handle" id="swipe-handle">
                     <i data-lucide="chevron-right" class="w-6 h-6"></i>
                 </div>
-                <span class="swipe-text">Swipe to Explore</span>
+                <span class="swipe-text" id="swipe-text">Swipe to Explore</span>
             </div>
         </div>
     </div>
@@ -319,6 +320,7 @@
         const openQrBtn = document.getElementById('open-qr');
         const closeQrBtn = document.getElementById('close-qr');
         const handle = document.getElementById('swipe-handle');
+        const swipeText = document.getElementById('swipe-text');
 
         function revealDashboard() {
             splash.classList.add('fade-out');
@@ -366,24 +368,37 @@
             handle.style.transform = `translateX(${delta}px)`;
             
             // Apply slight opacity fade as we swipe
-            handle.parentElement.querySelector('.swipe-text').style.opacity = 1 - (delta / maxDelta);
+            swipeText.style.opacity = 1 - (delta / maxDelta);
+        }
+
+        function resetSwipe() {
+            handle.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            handle.style.transform = `translateX(0px)`;
+            swipeText.style.opacity = 1;
         }
 
         function onEnd() {
             if (!isDragging) return;
             isDragging = false;
-            const currentTransform = new WebKitCSSMatrix(window.getComputedStyle(handle).transform).m41;
+            
+            // Get current translation value
+            const style = window.getComputedStyle(handle);
+            const matrix = new WebKitCSSMatrix(style.transform);
+            const currentTransform = matrix.m41;
             
             if (currentTransform >= maxDelta * 0.9) {
                 // Success - trigger redirect
                 handle.style.transition = 'transform 0.2s ease-out';
                 handle.style.transform = `translateX(${maxDelta}px)`;
-                setTimeout(() => window.location.href = EXTERNAL_URL, 150);
+                
+                // Open external link
+                window.location.href = EXTERNAL_URL;
+                
+                // Reset position after short delay so it's ready when user returns
+                setTimeout(resetSwipe, 1000);
             } else {
                 // Fail - snap back
-                handle.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                handle.style.transform = `translateX(0px)`;
-                handle.parentElement.querySelector('.swipe-text').style.opacity = 1;
+                resetSwipe();
             }
         }
 
