@@ -72,7 +72,7 @@
             justify-content: center;
             z-index: 9998;
             opacity: 0;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.3s ease;
         }
         #transition-screen.active { display: flex; opacity: 1; }
 
@@ -165,6 +165,45 @@
         .qr-logo-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; background: white; padding: 6px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .qr-logo-overlay img { width: 100%; height: 100%; border-radius: 14px; object-fit: cover; }
 
+        /* Floating Action Button (Top Right) */
+        .fab-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9000;
+        }
+        .fab {
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            color: #18181b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #808a5c;
+        }
+        .fab:active { transform: scale(0.9); }
+        .fab-dismiss {
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
         /* Loading Animation */
         .logo-carousel-container { perspective: 1000px; width: 120px; height: 120px; position: relative; }
         .logo-carousel-inner { width: 100%; height: 100%; position: absolute; transform-style: preserve-3d; animation: rotateCarousel 2s infinite linear; }
@@ -204,7 +243,7 @@
         </div>
     </div>
 
-    <!-- Transition Screen -->
+    <!-- Transition Screen (Navigation Loading) -->
     <div id="transition-screen">
         <div class="flex flex-col items-center">
             <div class="logo-carousel-container">
@@ -238,6 +277,16 @@
                 <p class="text-[#808a5c] text-xs font-black uppercase tracking-[0.3em]">#FITTER #STRONGER #BETTER</p>
             </div>
             <button id="close-qr" class="w-full bg-zinc-900 text-white py-5 rounded-2xl text-xs font-black uppercase tracking-widest active:scale-95 transition-transform">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Floating Save Button (Top Right) -->
+    <div class="fab-container" id="save-ui-container">
+        <div class="fab" id="fab-save" title="Save to Device">
+            <i data-lucide="download" class="w-6 h-6"></i>
+        </div>
+        <div class="fab-dismiss" id="fab-dismiss" title="Dismiss">
+            <i data-lucide="x" class="w-4 h-4"></i>
         </div>
     </div>
 
@@ -298,6 +347,9 @@
         const swipeText = document.getElementById('swipe-text');
         const flipper = document.getElementById('avatar-flipper');
         const frontImg = document.getElementById('avatar-front');
+        const fabSave = document.getElementById('fab-save');
+        const fabDismiss = document.getElementById('fab-dismiss');
+        const saveUiContainer = document.getElementById('save-ui-container');
 
         async function runAvatarSequence() {
             setTimeout(() => {
@@ -318,6 +370,28 @@
         }
 
         window.addEventListener('load', () => setTimeout(revealDashboard, 2000));
+
+        // Save to Device Logic
+        fabSave.addEventListener('click', () => {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:Chris Hedley
+ORG:Circular Roots Coaching;TRAIN UNCNVNTNL
+TITLE:Online Coach & PT
+URL:https://coachchriscrc.carrd.co
+END:VCARD`;
+            const blob = new Blob([vcard], { type: 'text/vcard' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ChrisHedley.vcf';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        fabDismiss.addEventListener('click', () => {
+            saveUiContainer.style.display = 'none';
+        });
 
         // Drag/Swipe Logic
         let isDragging = false;
@@ -340,6 +414,12 @@
             swipeText.style.opacity = 1 - (delta / maxDelta);
         }
 
+        function resetSwipe() {
+            handle.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            handle.style.transform = `translateX(0px)`;
+            swipeText.style.opacity = 1;
+        }
+
         function onEnd() {
             if (!isDragging) return;
             isDragging = false;
@@ -350,12 +430,21 @@
             if (matrix.m41 >= maxDelta * 0.9) {
                 handle.style.transition = 'transform 0.2s ease-out';
                 handle.style.transform = `translateX(${maxDelta}px)`;
+                
+                // Show loading screen
                 transitionScreen.classList.add('active');
-                setTimeout(() => window.location.href = EXTERNAL_URL, 800);
+                
+                // Navigate
+                window.location.href = EXTERNAL_URL;
+
+                // Safety: If the user stays on the page (e.g. back button or tab stays open),
+                // hide the loader after a short timeout so they aren't stuck.
+                setTimeout(() => {
+                    transitionScreen.classList.remove('active');
+                    resetSwipe();
+                }, 1500);
             } else {
-                handle.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                handle.style.transform = `translateX(0px)`;
-                swipeText.style.opacity = 1;
+                resetSwipe();
             }
         }
 
