@@ -1,4 +1,4 @@
-# Links Card
-PWA Loading Animation &amp; Link Card Site
+# DB Card
+PWA Loading Animation &amp; Digital Card + Link Site
 
-https://coachchriscrc.github.io/linkscard
+https://coachchriscrc.github.io/dbcard
