@@ -90,7 +90,7 @@
             opacity: 1;
         }
 
-        /* Logo Carousel Animation */
+        /* Logo Carousel Animation - Sped Up to 2s */
         .logo-carousel-container {
             perspective: 1000px;
             width: 120px;
@@ -103,7 +103,7 @@
             height: 100%;
             position: absolute;
             transform-style: preserve-3d;
-            animation: rotateCarousel 4s infinite linear;
+            animation: rotateCarousel 2s infinite linear;
         }
 
         .carousel-item {
@@ -130,7 +130,7 @@
             border-radius: 50%;
         }
 
-        /* Pulse base for transition screen */
+        /* Pulse base for transition screen - Sped Up to 0.8s */
         .loading-pulse {
             width: 40px;
             height: 4px;
@@ -138,7 +138,7 @@
             border-radius: 99px;
             margin-top: 60px;
             opacity: 0.3;
-            animation: expandPulse 1.5s ease-in-out infinite;
+            animation: expandPulse 0.8s ease-in-out infinite;
         }
 
         @keyframes expandPulse {
@@ -528,7 +528,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'coach-chris-v11';
+                    const CACHE_NAME = 'coach-chris-v12';
                     self.addEventListener('install', (e) => {
                         e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(['./'])));
                     });
@@ -579,9 +579,10 @@
                 handle.style.transition = 'transform 0.2s ease-out';
                 handle.style.transform = `translateX(${maxDelta}px)`;
                 transitionScreen.classList.add('active');
+                // Reduced delay to 800ms for faster response
                 setTimeout(() => {
                     window.location.href = EXTERNAL_URL;
-                }, 1500);
+                }, 800);
             } else {
                 resetSwipe();
             }
