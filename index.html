@@ -283,7 +283,7 @@
     <!-- Floating Save Button (Top Right) -->
     <div class="fab-container" id="save-ui-container">
         <div class="fab" id="fab-save" title="Install App">
-            <i data-lucide="plus" class="w-6 h-6"></i>
+            <i data-lucide="download" class="w-6 h-6"></i>
         </div>
         <div class="fab-dismiss" id="fab-dismiss" title="Dismiss">
             <i data-lucide="x" class="w-4 h-4"></i>
@@ -353,10 +353,10 @@
 
         let deferredPrompt;
 
-        // Check standalone mode
+        // Check if the app is already installed or running in standalone mode
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-        // The button only shows if we have a prompt and aren't installed
+        // The button only appears if we are in a mobile browser and the install prompt is available
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -385,6 +385,7 @@
 
         window.addEventListener('load', () => setTimeout(revealDashboard, 2000));
 
+        // Installation only - no other functions
         fabSave.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
