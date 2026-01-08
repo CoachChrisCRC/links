@@ -516,11 +516,11 @@
             installPrompt.classList.remove('visible');
         });
 
+        // CRITICAL FIX: Ensure transition screen is hidden on back-navigation
         window.addEventListener('pageshow', (event) => {
-            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-                transitionScreen.classList.remove('active');
-                resetSwipe();
-            }
+            // Hide transition screen and reset swipe whenever page is shown (back navigation or fresh load)
+            transitionScreen.classList.remove('active');
+            resetSwipe();
         });
 
         window.addEventListener('load', () => setTimeout(revealDashboard, 2000));
@@ -528,7 +528,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'coach-chris-v12';
+                    const CACHE_NAME = 'coach-chris-v13';
                     self.addEventListener('install', (e) => {
                         e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(['./'])));
                     });
@@ -578,8 +578,11 @@
             if (currentTransform >= maxDelta * 0.9) {
                 handle.style.transition = 'transform 0.2s ease-out';
                 handle.style.transform = `translateX(${maxDelta}px)`;
+                
+                // Show transition animation
                 transitionScreen.classList.add('active');
-                // Reduced delay to 800ms for faster response
+                
+                // Redirect after brief animation delay
                 setTimeout(() => {
                     window.location.href = EXTERNAL_URL;
                 }, 800);
