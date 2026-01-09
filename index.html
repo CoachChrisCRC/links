@@ -305,11 +305,10 @@
         const EXTERNAL_URL = "https://coachchriscrc.carrd.co";
         const CONTACT_INFO = {
             name: "Coach Chris (Chris Hedley)",
-            phone: "+447925116794",
+            phone: "447925116794",
             email: "Circularrootscoaching@gmail.com",
             web: "https://coachchriscrc.carrd.co",
-            instagram: "chris.h_crc", // Username only for social profile
-            facebook: "Circular Roots Coaching"
+            instagram: "chris.h_crc"
         };
         const LOGOS = [
             "https://raw.githubusercontent.com/CoachChrisCRC/linkscard/refs/heads/main/CRC-Logo.png",
@@ -359,24 +358,16 @@
 
         window.addEventListener('load', () => setTimeout(revealDashboard, 2000));
 
-        // Generate vCard with Native Social Links and WhatsApp Integration
+        // Generate vCard with multiple website links
         saveVcardBtn.addEventListener('click', () => {
-            const cleanPhone = CONTACT_INFO.phone.replace('+', '');
-            
-            // vCard 3.0 format for better compatibility
-            // X-SOCIALPROFILE is the standard for modern mobile OS
-            // WhatsApp is added as an additional phone labeled 'WORK' (which many OS treat as a priority chat field)
             const vcard = [
                 "BEGIN:VCARD",
                 "VERSION:3.0",
                 `FN:${CONTACT_INFO.name}`,
-                `TEL;TYPE=CELL,VOICE:${CONTACT_INFO.phone}`,
-                `TEL;TYPE=WORK,VOICE:wa.me/${cleanPhone}`, // WhatsApp pseudo-number for direct link
                 `EMAIL;TYPE=PREF,INTERNET:${CONTACT_INFO.email}`,
-                `URL:${CONTACT_INFO.web}`,
-                `X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/${CONTACT_INFO.instagram}`,
-                `X-SOCIALPROFILE;TYPE=facebook:https://facebook.com/circularrootscoaching`,
-                `NOTE:WhatsApp: https://wa.me/${cleanPhone}\\nInstagram: @${CONTACT_INFO.instagram}\\nFacebook: ${CONTACT_INFO.facebook}`,
+                `URL;TYPE=WORK:${CONTACT_INFO.web}`,
+                `URL;TYPE=INSTAGRAM:https://instagram.com/${CONTACT_INFO.instagram}`,
+                `URL;TYPE=WHATSAPP:https://wa.me/${CONTACT_INFO.phone}`,
                 "END:VCARD"
             ].join("\n");
 
