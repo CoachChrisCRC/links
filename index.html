@@ -372,8 +372,7 @@
             web: "https://coachchriscrc.carrd.co",
             whatsapp: "https://wa.me/447925116794",
             title: "Online Coach & PT",
-            org: "Circular Roots Coaching",
-            workInfo: "Online Coach & PT\n|Circular Roots Coaching|\n|TRAIN UNCNVNTNL|\n#Fitter #Stronger #Better"
+            org: "Circular Roots Coaching; TRAIN UNCNVNTNL"
         };
 
         const LOGOS = [
@@ -445,8 +444,6 @@
                 `URL;TYPE=WORK:${CONTACT_INFO.web}`,
                 `X-PHONETIC-FIRST-NAME:Chris`,
                 `X-PHONETIC-LAST-NAME:Hedley`,
-                // Adding custom work info fields (many clients show this in summary or work sections)
-                `X-CUSTOM-WORK-INFO:${CONTACT_INFO.workInfo.replace(/\n/g, '\\n')}`,
                 "item1.URL:" + CONTACT_INFO.whatsapp,
                 "item1.X-ABLabel:WhatsApp",
                 "END:VCARD"
