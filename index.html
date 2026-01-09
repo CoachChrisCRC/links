@@ -44,6 +44,7 @@
             --btn-border: #27272a;
             --icon-bg: #f4f4f5;
             --whatsapp-color: #25D366;
+            --live-bg: rgba(128, 138, 92, 0.1);
         }
 
         /* Default Dark Mode (based on system) */
@@ -65,6 +66,7 @@
                 --btn-ghost-bg: rgba(39, 39, 42, 0.5);
                 --btn-border: #f4f4f5;
                 --icon-bg: rgba(39, 39, 42, 0.6);
+                --live-bg: rgba(128, 138, 92, 0.2);
             }
         }
 
@@ -86,6 +88,7 @@
             --btn-ghost-bg: rgba(39, 39, 42, 0.5);
             --btn-border: #f4f4f5;
             --icon-bg: rgba(39, 39, 42, 0.6);
+            --live-bg: rgba(128, 138, 92, 0.2);
         }
 
         /* Explicit Light Mode */
@@ -106,6 +109,7 @@
             --btn-ghost-bg: #f4f4f5;
             --btn-border: #000000;
             --icon-bg: #f4f4f5;
+            --live-bg: rgba(128, 138, 92, 0.1);
         }
         
         body { 
@@ -173,7 +177,7 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border-radius: 48px;
-            padding: 40px 24px 32px 24px;
+            padding: 48px 24px 32px 24px;
             box-shadow: 
                 0 40px 80px -20px var(--card-shadow),
                 0 0 0 1px var(--card-inner-glow) inset;
@@ -185,6 +189,39 @@
             position: relative;
             transform-style: preserve-3d;
             transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        /* LIVE STATUS INDICATOR */
+        .live-status-pill {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: var(--live-bg);
+            border: 1px solid rgba(128, 138, 92, 0.3);
+            padding: 4px 12px;
+            border-radius: 99px;
+            z-index: 10;
+        }
+        .live-status-pill.active { display: flex; }
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--olive);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--olive);
+            animation: pulse-live 1.5s infinite;
+        }
+        @keyframes pulse-live {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .live-text {
+            font-[900] text-[8px] uppercase tracking-[0.2em] text-main;
         }
 
         .avatar-ring { 
@@ -569,6 +606,13 @@
     <!-- Main Card -->
     <div class="card-perspective">
         <div id="main-card" class="card-container opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+            
+            <!-- LIVE TRAINING INDICATOR -->
+            <div id="live-indicator" class="live-status-pill">
+                <span class="live-dot"></span>
+                <span class="live-text text-main font-black text-[8px] uppercase tracking-[0.2em]">Training Now</span>
+            </div>
+
             <div class="avatar-ring">
                 <div class="avatar-flipper" id="avatar-flipper">
                     <img id="avatar-front" src="https://raw.githubusercontent.com/CoachChrisCRC/linkscard/refs/heads/main/CRC-Logo.png" alt="Logo Front">
@@ -655,6 +699,13 @@
             "https://raw.githubusercontent.com/CoachChrisCRC/app/df3580c5a17d646dc6813a283f7e85e269fece8e/CoachChrisCRC-AppIcon.png"
         ];
 
+        // LIVE STATUS CONFIGURATION
+        const LIVE_STATUS_CONFIG = {
+            activeDays: [1, 2, 3, 4, 5, 6], // Mon, Tue, Wed, Thu, Fri, Sat
+            startHour: 6, // 6:00 AM
+            endHour: 20   // 8:00 PM
+        };
+
         const splash = document.getElementById('splash-screen');
         const transitionScreen = document.getElementById('transition-screen');
         const mainCard = document.getElementById('main-card');
@@ -673,9 +724,28 @@
         const saveUiContainer = document.getElementById('save-ui-container');
         const slider = document.getElementById('testimonial-slider');
         const dots = document.querySelectorAll('.testimonial-dot');
+        const liveIndicator = document.getElementById('live-indicator');
         
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
+
+        /**
+         * Update Live indicator visibility based on current time.
+         */
+        function updateLiveStatus() {
+            const now = new Date();
+            const day = now.getDay();
+            const hour = now.getHours();
+            
+            const isWorkingDay = LIVE_STATUS_CONFIG.activeDays.includes(day);
+            const isWorkingHour = hour >= LIVE_STATUS_CONFIG.startHour && hour < LIVE_STATUS_CONFIG.endHour;
+            
+            if (isWorkingDay && isWorkingHour) {
+                liveIndicator.classList.add('active');
+            } else {
+                liveIndicator.classList.remove('active');
+            }
+        }
 
         /**
          * Determine the effective theme.
@@ -691,8 +761,6 @@
          * Updates the UI icon to reflect the ACTION available (e.g., Sun in dark mode).
          */
         function updateThemeIcon(theme) {
-            // If current theme is dark, show SUN (to switch to light)
-            // If current theme is light, show MOON (to switch to dark)
             if (theme === 'dark') {
                 themeIcon.setAttribute('data-lucide', 'sun');
             } else {
@@ -703,8 +771,6 @@
 
         function initTheme() {
             const theme = getEffectiveTheme();
-            // Only set data-theme if there is a manual override, 
-            // otherwise rely on the CSS @media (prefers-color-scheme)
             if (localStorage.getItem('theme')) {
                 document.documentElement.setAttribute('data-theme', theme);
             }
@@ -720,7 +786,6 @@
             updateThemeIcon(next);
         });
 
-        // Listen for system changes to update icon dynamically if no override exists
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             if (!localStorage.getItem('theme')) {
                 updateThemeIcon(e.matches ? 'dark' : 'light');
@@ -751,10 +816,14 @@
             setTimeout(() => {
                 mainCard.classList.remove('opacity-0', 'translate-y-12');
                 runAvatarSequence();
+                updateLiveStatus(); // Initial check
             }, 200);
         }
 
         window.addEventListener('load', () => setTimeout(revealDashboard, 1500));
+
+        // Re-check live status every 5 minutes
+        setInterval(updateLiveStatus, 300000);
 
         slider.addEventListener('scroll', () => {
             const index = Math.round(slider.scrollLeft / slider.offsetWidth);
@@ -853,6 +922,7 @@
             if (document.visibilityState === 'visible') {
                 transitionScreen.classList.remove('active');
                 resetSwipe();
+                updateLiveStatus();
             }
         });
 
@@ -875,7 +945,7 @@
             height: 240,
             colorDark : "#000000",
             colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+            correctLevel : QRCode.Level.H
         });
     </script>
 </body>
