@@ -147,6 +147,16 @@
             overflow: hidden;
         }
 
+        /* --- Live Traffic Light Styles --- */
+        .live-indicator { 
+            width: 10px; height: 10px; border-radius: 50%; 
+            opacity: 0.15; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .active-light { opacity: 1 !important; transform: scale(1.1); }
+        .active-green { box-shadow: 0 0 15px #10b981; }
+        .active-amber { box-shadow: 0 0 15px #f59e0b; }
+        .active-red { box-shadow: 0 0 15px #f43f5e; }
+
         .avatar-ring { 
             position: relative; 
             padding: 8px; 
@@ -520,6 +530,19 @@
     <!-- Main Card -->
     <div class="card-perspective">
         <div id="main-card" class="card-container opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+            
+            <!-- Live Status Bar Integrated -->
+            <div class="w-full flex justify-between items-center mb-6 px-1">
+                <div class="flex gap-1.5 bg-black/5 dark:bg-white/5 p-1.5 rounded-full border border-black/5 dark:border-white/5">
+                    <div id="light-red" class="live-indicator bg-rose-500"></div>
+                    <div id="light-amber" class="live-indicator bg-amber-500"></div>
+                    <div id="light-green" class="live-indicator bg-emerald-500"></div>
+                </div>
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <span id="status-text" class="text-[8px] font-black uppercase tracking-[0.2em] text-muted italic truncate max-w-[150px]">Syncing...</span>
+                </div>
+            </div>
+
             <div class="avatar-ring">
                 <div class="avatar-flipper" id="avatar-flipper">
                     <img id="avatar-front" src="https://raw.githubusercontent.com/CoachChrisCRC/linkscard/refs/heads/main/CRC-Logo.png" alt="Logo Front">
@@ -587,6 +610,7 @@
 
     <script>
         const EXTERNAL_URL = "https://coachchriscrc.carrd.co";
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXLZhY6w7aWwg5ZjFGoh7T-0xx3WownV46HBKC1iMNqxiOAW8LfbcfqnoXo8YznaaerjeG1_R6vb7c/pub?gid=0&single=true&output=csv";
         
         const CONTACT_INFO = {
             firstName: "Chris",
@@ -605,6 +629,42 @@
             "https://raw.githubusercontent.com/CoachChrisCRC/linkscard/refs/heads/main/UNCNVNTNL-Logo.png",
             "https://raw.githubusercontent.com/CoachChrisCRC/app/df3580c5a17d646dc6813a283f7e85e269fece8e/CoachChrisCRC-AppIcon.png"
         ];
+
+        // --- Live Status Remote Logic ---
+        async function updateLiveStatus() {
+            try {
+                const response = await fetch(SHEET_URL + '&cache=' + Date.now());
+                if (!response.ok) throw new Error('Sheet not found');
+                
+                const csvData = await response.text();
+                const rows = csvData.split('\n');
+                if (rows.length < 2) return;
+
+                const cols = rows[1].split(',');
+                const message = cols[0].replace(/"/g, '').trim();
+                const color = cols[1].replace(/"/g, '').trim().toLowerCase();
+
+                applyStatus(message, color);
+            } catch (error) {
+                console.error("Status Sync Error:", error);
+                document.getElementById('status-text').innerText = "Sync Error";
+            }
+        }
+
+        function applyStatus(msg, color) {
+            const textEl = document.getElementById('status-text');
+            textEl.innerText = msg;
+            
+            const colors = ['red', 'amber', 'green'];
+            colors.forEach(c => {
+                const light = document.getElementById(`light-${c}`);
+                light.classList.remove('active-light', 'active-red', 'active-amber', 'active-green');
+                
+                if (c === color) {
+                    light.classList.add('active-light', `active-${c}`);
+                }
+            });
+        }
 
         const splash = document.getElementById('splash-screen');
         const transitionScreen = document.getElementById('transition-screen');
@@ -669,11 +729,9 @@
             }, 200);
         }
 
-        // Improved Navigation Logic
         function triggerNavigation(url, withLoading = true) {
             if (withLoading) {
                 transitionScreen.classList.add('active');
-                // We use a small timeout to ensure the UI updates before navigation starts
                 setTimeout(() => {
                     window.location.href = url;
                 }, 100);
@@ -682,13 +740,9 @@
             }
         }
 
-        // CRITICAL: Handle Back Button / bfcache
-        // This ensures if the user navigates back, the loading screen isn't still visible.
         window.addEventListener('pageshow', (event) => {
             if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-                // Page was loaded from cache (back button)
                 transitionScreen.classList.remove('active');
-                // Reset swipe handle position
                 handle.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
                 handle.style.transform = `translateX(0px)`;
                 swipeText.style.opacity = 1;
@@ -698,6 +752,9 @@
         window.addEventListener('load', () => {
             lucide.createIcons();
             setTimeout(revealDashboard, 1500);
+            updateLiveStatus();
+            setInterval(updateLiveStatus, 30000);
+
             document.querySelectorAll('.quick-connect').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const url = btn.getAttribute('data-url');
