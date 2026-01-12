@@ -375,6 +375,7 @@
             100% { left: 100%; width: 40%; }
         }
 
+        /* Testimonial Slider Styles */
         .testimonial-slider {
             display: flex;
             overflow-x: auto;
@@ -474,6 +475,7 @@
             </div>
             
             <div class="testimonial-slider" id="testimonial-slider">
+                <!-- Testimonial 1 -->
                 <div class="testimonial-card">
                     <div class="mb-3">
                         <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
@@ -486,6 +488,7 @@
                     </div>
                 </div>
                 
+                <!-- Testimonial 2 -->
                 <div class="testimonial-card">
                     <div class="mb-3">
                         <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
@@ -498,6 +501,7 @@
                     </div>
                 </div>
 
+                <!-- Testimonial 3 -->
                 <div class="testimonial-card">
                     <div class="mb-3">
                         <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
@@ -509,10 +513,80 @@
                         <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Dedicated Client</span>
                     </div>
                 </div>
+
+                <!-- Testimonial 4 -->
+                <div class="testimonial-card">
+                    <div class="mb-3">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
+                        <h5 class="text-[11px] font-bold text-main leading-tight">Transformation via Personalized Programming</h5>
+                    </div>
+                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"I'm over the moon with my results. Chris is an excellent motivator; he knows your strengths and weaknesses and structures sessions with that knowledge."</p>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Suzanne Thompson</span>
+                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">PT & Custom Programming</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 5 -->
+                <div class="testimonial-card">
+                    <div class="mb-3">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
+                        <h5 class="text-[11px] font-bold text-main leading-tight">High Engagement & Positive Class Atmosphere</h5>
+                    </div>
+                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Always encouraging and happy. Everyone enjoys the classes every time—his energy is infectious and keeps us all coming back."</p>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Kris McGough</span>
+                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Class Participant</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 6 -->
+                <div class="testimonial-card">
+                    <div class="mb-3">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
+                        <h5 class="text-[11px] font-bold text-main leading-tight">Mastered Lifting Technique & Pushed Limits</h5>
+                    </div>
+                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Chris taught me great technique for lifting and pushed me harder than I thought I could go. Highly recommended for anyone ready to up their game."</p>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Vicky Jackson</span>
+                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Personal Training Client</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 7 -->
+                <div class="testimonial-card">
+                    <div class="mb-3">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
+                        <h5 class="text-[11px] font-bold text-main leading-tight">Optimized Running Form & Functional Balance</h5>
+                    </div>
+                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Chris quickly identified how strength training could improve my running technique, balance, and posture. It ain't an easy ride—but well worth the trip!"</p>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Lisa Watson</span>
+                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Running & Strength Client</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 8 -->
+                <div class="testimonial-card">
+                    <div class="mb-3">
+                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
+                        <h5 class="text-[11px] font-bold text-main leading-tight">Holistic Goal-Driven Wellbeing Success</h5>
+                    </div>
+                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Chris is the living embodiment of positive goal-driven wellbeing. He knows exactly how to help you reach your goals if you invest the time."</p>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Kelly Coats</span>
+                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Wellness & Goal-Setting</span>
+                    </div>
+                </div>
             </div>
             
             <div class="flex justify-center gap-1 mt-6" id="testimonial-dots">
                 <div class="testimonial-dot active"></div>
+                <div class="testimonial-dot"></div>
+                <div class="testimonial-dot"></div>
+                <div class="testimonial-dot"></div>
+                <div class="testimonial-dot"></div>
+                <div class="testimonial-dot"></div>
                 <div class="testimonial-dot"></div>
                 <div class="testimonial-dot"></div>
             </div>
@@ -701,7 +775,6 @@
         const fabSave = document.getElementById('fab-save');
         const themeToggle = document.getElementById('theme-toggle');
         const slider = document.getElementById('testimonial-slider');
-        const dots = document.querySelectorAll('.testimonial-dot');
 
         function setTheme(isDark) {
             if (isDark) {
@@ -767,6 +840,7 @@
         });
 
         slider.addEventListener('scroll', () => {
+            const dots = document.querySelectorAll('.testimonial-dot');
             const index = Math.round(slider.scrollLeft / slider.offsetWidth);
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === index);
