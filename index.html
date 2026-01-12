@@ -81,10 +81,9 @@
             --status-red-text: #f87171;
         }
 
-        /* Dynamic Status Colors for Glow */
-        .status-green { --status-glow: rgba(21, 128, 61, 0.4); }
-        .status-amber { --status-glow: rgba(180, 83, 9, 0.4); }
-        .status-red { --status-glow: rgba(185, 28, 28, 0.4); }
+        .status-green { --status-glow: rgba(21, 128, 61, 0.5); }
+        .status-amber { --status-glow: rgba(180, 83, 9, 0.5); }
+        .status-red { --status-glow: rgba(185, 28, 28, 0.5); }
         
         body { 
             font-family: 'Inter', sans-serif; 
@@ -175,11 +174,17 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
+            transform: translateY(-10px);
             border: 1px solid transparent;
+            pointer-events: none;
         }
-        .status-pill.visible { opacity: 1; }
+        .status-pill.visible { 
+            opacity: 1; 
+            transform: translateY(0);
+            pointer-events: auto;
+        }
         
         .status-pill.green { 
             background: rgba(220, 252, 231, 0.5); 
@@ -214,7 +219,6 @@
             100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 currentColor; } 
         }
 
-        /* --- Refined Status Glow Ring --- */
         .avatar-ring { 
             position: relative; 
             padding: 8px; 
@@ -222,14 +226,19 @@
             border-radius: 50%; 
             margin-bottom: 20px; 
             perspective: 1000px;
-            transition: box-shadow 0.8s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 2px var(--status-glow);
-            animation: ring-pulse 3s infinite ease-in-out;
+            transition: box-shadow 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 0px var(--status-glow);
+        }
+        
+        .avatar-ring.glow-active {
+            animation: ring-pulse 4s infinite ease-in-out;
+            /* Initial shadow state when active to match fade-in starting point */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 5px 1px var(--status-glow);
         }
 
         @keyframes ring-pulse {
-            0%, 100% { box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 1px var(--status-glow); }
-            50% { box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 20px 4px var(--status-glow); }
+            0%, 100% { box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 5px 1px var(--status-glow); }
+            50% { box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 35px 8px var(--status-glow); }
         }
 
         .avatar-flipper { width: 130px; height: 130px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -596,13 +605,15 @@
     <div class="card-perspective">
         <div id="main-card" class="card-container opacity-0 translate-y-12 transition-all duration-1000 ease-out">
             
-            <div class="w-full flex justify-center mb-6 px-1">
+            <!-- Dynamic Status Badge -->
+            <div class="w-full flex justify-center mb-6 px-1 h-6">
                 <div id="status-badge" class="status-pill">
                     <div class="status-dot pulse"></div>
                     <span id="status-text">Syncing...</span>
                 </div>
             </div>
 
+            <!-- Avatar with Dynamic Glow Ring -->
             <div class="avatar-ring" id="avatar-ring">
                 <div class="avatar-flipper" id="avatar-flipper">
                     <img id="avatar-front" src="https://raw.githubusercontent.com/CoachChrisCRC/linkscard/refs/heads/main/CRC-Logo.png" alt="Logo Front">
@@ -625,9 +636,9 @@
                         <i data-lucide="qr-code" class="w-4 h-4"></i>
                         <span class="text-[9px] font-black uppercase tracking-widest">Share Card</span>
                     </button>
-                    <button id="save-vcard" class="flex items-center justify-center gap-2 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 py-4 rounded-2xl shadow-sm active:scale-[0.96] transition-all">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span class="text-[9px] font-black uppercase tracking-widest">Save Contact</span>
+                    <button id="save-vcard" class="flex items-center justify-center gap-2 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-100 dark:text-zinc-900 py-4 rounded-2xl shadow-sm active:scale-[0.96] transition-all" style="background: currentColor; color-interpolation-filters: auto;">
+                        <i data-lucide="user-plus" class="w-4 h-4" style="color: var(--text-main)"></i>
+                        <span class="text-[9px] font-black uppercase tracking-widest" style="color: var(--text-main)">Save Contact</span>
                     </button>
                     <button id="open-testimonials" class="col-span-2 flex items-center justify-center gap-2 bg-white/50 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-700 active:scale-[0.96] transition-all">
                         <i data-lucide="star" class="w-4 h-4 text-[#808a5c]"></i>
@@ -690,6 +701,8 @@
             "https://raw.githubusercontent.com/CoachChrisCRC/app/df3580c5a17d646dc6813a283f7e85e269fece8e/CoachChrisCRC-AppIcon.png"
         ];
 
+        let currentStatusData = { msg: "", color: "" };
+
         async function updateLiveStatus() {
             try {
                 const response = await fetch(SHEET_URL + '&cache=' + Date.now());
@@ -697,16 +710,20 @@
                 
                 const csvData = await response.text();
                 const rows = csvData.split('\n');
+                
                 if (rows.length < 2) return;
 
                 const cols = rows[1].split(',');
-                const message = cols[0].replace(/"/g, '').trim();
-                const color = cols[1].replace(/"/g, '').trim().toLowerCase();
+                const message = cols[0] ? cols[0].replace(/"/g, '').trim() : "";
+                const color = cols[1] ? cols[1].replace(/"/g, '').trim().toLowerCase() : "";
 
-                applyStatus(message, color);
+                currentStatusData = { msg: message, color: color };
+                
+                if (document.getElementById('splash-screen').classList.contains('fade-out')) {
+                    applyStatus(message, color);
+                }
             } catch (error) {
                 console.error("Status Sync Error:", error);
-                document.getElementById('status-text').innerText = "Sync Error";
             }
         }
 
@@ -714,14 +731,40 @@
             const badge = document.getElementById('status-badge');
             const textEl = document.getElementById('status-text');
             const body = document.getElementById('app-body');
+            const avatarRing = document.getElementById('avatar-ring');
             
-            textEl.innerText = msg;
-            badge.classList.remove('green', 'amber', 'red');
-            badge.classList.add(color, 'visible');
+            if (!msg || msg === "") {
+                badge.classList.remove('visible');
+                avatarRing.classList.remove('glow-active');
+                body.classList.remove('status-green', 'status-amber', 'status-red');
+                return;
+            }
 
-            // Apply global CSS variable mapping for the glow ring
+            if (textEl.innerText !== msg && badge.classList.contains('visible')) {
+                badge.classList.remove('visible');
+                avatarRing.classList.remove('glow-active');
+                setTimeout(() => {
+                    textEl.innerText = msg;
+                    applyStatus(msg, color);
+                }, 800);
+                return;
+            }
+
+            textEl.innerText = msg;
+            
+            // Apply color classes immediately
+            badge.classList.remove('green', 'amber', 'red');
+            if (color) badge.classList.add(color);
             body.classList.remove('status-green', 'status-amber', 'status-red');
-            body.classList.add(`status-${color}`);
+            if (color) body.classList.add(`status-${color}`);
+
+            // Trigger smooth fade-in for both simultaneously
+            requestAnimationFrame(() => {
+                badge.classList.add('visible');
+                if (color) {
+                    avatarRing.classList.add('glow-active');
+                }
+            });
         }
 
         const splash = document.getElementById('splash-screen');
@@ -737,6 +780,7 @@
         const handle = document.getElementById('swipe-handle');
         const swipeText = document.getElementById('swipe-text');
         const flipper = document.getElementById('avatar-flipper');
+        const avatarRing = document.getElementById('avatar-ring');
         const frontImg = document.getElementById('avatar-front');
         const fabSave = document.getElementById('fab-save');
         const themeToggle = document.getElementById('theme-toggle');
@@ -771,11 +815,21 @@
             fabSave.classList.remove('hidden');
         });
 
+        function revealStatusEffects() {
+            applyStatus(currentStatusData.msg, currentStatusData.color);
+        }
+
         async function runAvatarSequence() {
+            // First flip (CRC -> UNCNVNTNL)
             setTimeout(() => flipper.style.transform = 'rotateY(180deg)', 800);
+            
+            // Second flip back (UNCNVNTNL -> CRC/Profile)
             setTimeout(() => {
                 frontImg.src = LOGOS[2];
                 flipper.style.transform = 'rotateY(360deg)';
+                
+                // CRITICAL: Wait for the 800ms flip transition to end before fading in the pill and ring
+                setTimeout(revealStatusEffects, 800);
             }, 1800);
         }
 
@@ -784,7 +838,7 @@
             setTimeout(() => {
                 mainCard.classList.remove('opacity-0', 'translate-y-12');
                 runAvatarSequence();
-            }, 200);
+            }, 300);
         }
 
         function triggerNavigation(url, withLoading = true) {
@@ -809,8 +863,8 @@
 
         window.addEventListener('load', () => {
             lucide.createIcons();
-            setTimeout(revealDashboard, 1500);
             updateLiveStatus();
+            setTimeout(revealDashboard, 1500);
             setInterval(updateLiveStatus, 30000);
 
             document.querySelectorAll('.quick-connect').forEach(btn => {
