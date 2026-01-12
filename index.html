@@ -817,6 +817,7 @@
         function triggerNavigation(url, withLoading = true) {
             if (withLoading) {
                 transitionScreen.classList.add('active');
+                // Use setTimeout to ensure the browser has a chance to render the transition
                 setTimeout(() => {
                     window.location.href = url;
                 }, 100);
@@ -824,6 +825,18 @@
                 window.location.href = url;
             }
         }
+
+        // Fix for "stuck on loading screen" when navigating back
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                // If loaded from back-forward cache, reset UI
+                transitionScreen.classList.remove('active');
+                handle.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                handle.style.transform = `translateX(0px)`;
+                swipeText.style.opacity = 1;
+                isDragging = false;
+            }
+        };
 
         window.addEventListener('load', () => {
             lucide.createIcons();
