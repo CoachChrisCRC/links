@@ -232,7 +232,6 @@
         
         .avatar-ring.glow-active {
             animation: ring-pulse 4s infinite ease-in-out;
-            /* Initial shadow state when active to match fade-in starting point */
             box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 5px 1px var(--status-glow);
         }
 
@@ -407,9 +406,6 @@
             width: 16px;
             border-radius: 10px;
         }
-        .text-main { color: var(--text-main); }
-        .text-muted { color: var(--text-muted); }
-        .text-sub { color: var(--text-sub); }
     </style>
 </head>
 <body id="app-body">
@@ -513,75 +509,10 @@
                         <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Dedicated Client</span>
                     </div>
                 </div>
-
-                <div class="testimonial-card">
-                    <div class="mb-3">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
-                        <h5 class="text-[11px] font-bold text-main leading-tight">Transformation via Personalized Programming</h5>
-                    </div>
-                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"I'm over the moon with my results. Chris is an excellent motivator; he knows your strengths and weaknesses and structures sessions with that knowledge."</p>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Suzanne Thompson</span>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">PT & Custom Programming</span>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="mb-3">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
-                        <h5 class="text-[11px] font-bold text-main leading-tight">High Engagement & Positive Class Atmosphere</h5>
-                    </div>
-                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Always encouraging and happy. Everyone enjoys the classes every time—his energy is infectious and keeps us all coming back."</p>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Kris McGough</span>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Class Participant</span>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="mb-3">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
-                        <h5 class="text-[11px] font-bold text-main leading-tight">Mastered Lifting Technique & Pushed Limits</h5>
-                    </div>
-                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Chris taught me great technique for lifting and pushed me harder than I thought I could go. Highly recommended for anyone ready to up their game."</p>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Vicky Jackson</span>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Personal Training Client</span>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="mb-3">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
-                        <h5 class="text-[11px] font-bold text-main leading-tight">Optimized Running Form & Functional Balance</h5>
-                    </div>
-                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Chris quickly identified how strength training could improve my running technique, balance, and posture. It ain't an easy ride—but well worth the trip!"</p>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Lisa Watson</span>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Running & Strength Client</span>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="mb-3">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-[#808a5c] block mb-1">Top Achievement:</span>
-                        <h5 class="text-[11px] font-bold text-main leading-tight">Holistic Goal-Driven Wellbeing Success</h5>
-                    </div>
-                    <p class="text-[12px] italic leading-relaxed text-main font-medium mb-4">"Chris is the living embodiment of positive goal-driven wellbeing. He knows exactly how to help you reach your goals if you invest the time."</p>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-main">Kelly Coats</span>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-muted">Wellness & Goal-Setting</span>
-                    </div>
-                </div>
             </div>
             
             <div class="flex justify-center gap-1 mt-6" id="testimonial-dots">
                 <div class="testimonial-dot active"></div>
-                <div class="testimonial-dot"></div>
-                <div class="testimonial-dot"></div>
-                <div class="testimonial-dot"></div>
-                <div class="testimonial-dot"></div>
-                <div class="testimonial-dot"></div>
                 <div class="testimonial-dot"></div>
                 <div class="testimonial-dot"></div>
             </div>
@@ -636,9 +567,9 @@
                         <i data-lucide="qr-code" class="w-4 h-4"></i>
                         <span class="text-[9px] font-black uppercase tracking-widest">Share Card</span>
                     </button>
-                    <button id="save-vcard" class="flex items-center justify-center gap-2 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-100 dark:text-zinc-900 py-4 rounded-2xl shadow-sm active:scale-[0.96] transition-all" style="background: currentColor; color-interpolation-filters: auto;">
-                        <i data-lucide="user-plus" class="w-4 h-4" style="color: var(--text-main)"></i>
-                        <span class="text-[9px] font-black uppercase tracking-widest" style="color: var(--text-main)">Save Contact</span>
+                    <button id="save-vcard" class="flex items-center justify-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 py-4 rounded-2xl shadow-sm active:scale-[0.96] transition-all">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span class="text-[9px] font-black uppercase tracking-widest">Save Contact</span>
                     </button>
                     <button id="open-testimonials" class="col-span-2 flex items-center justify-center gap-2 bg-white/50 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-700 active:scale-[0.96] transition-all">
                         <i data-lucide="star" class="w-4 h-4 text-[#808a5c]"></i>
@@ -740,30 +671,16 @@
                 return;
             }
 
-            if (textEl.innerText !== msg && badge.classList.contains('visible')) {
-                badge.classList.remove('visible');
-                avatarRing.classList.remove('glow-active');
-                setTimeout(() => {
-                    textEl.innerText = msg;
-                    applyStatus(msg, color);
-                }, 800);
-                return;
-            }
-
             textEl.innerText = msg;
-            
-            // Apply color classes immediately
             badge.classList.remove('green', 'amber', 'red');
             if (color) badge.classList.add(color);
+            
             body.classList.remove('status-green', 'status-amber', 'status-red');
             if (color) body.classList.add(`status-${color}`);
 
-            // Trigger smooth fade-in for both simultaneously
             requestAnimationFrame(() => {
                 badge.classList.add('visible');
-                if (color) {
-                    avatarRing.classList.add('glow-active');
-                }
+                if (color) avatarRing.classList.add('glow-active');
             });
         }
 
@@ -780,7 +697,6 @@
         const handle = document.getElementById('swipe-handle');
         const swipeText = document.getElementById('swipe-text');
         const flipper = document.getElementById('avatar-flipper');
-        const avatarRing = document.getElementById('avatar-ring');
         const frontImg = document.getElementById('avatar-front');
         const fabSave = document.getElementById('fab-save');
         const themeToggle = document.getElementById('theme-toggle');
@@ -808,28 +724,12 @@
             setTheme(!isDark);
         });
 
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            fabSave.classList.remove('hidden');
-        });
-
-        function revealStatusEffects() {
-            applyStatus(currentStatusData.msg, currentStatusData.color);
-        }
-
         async function runAvatarSequence() {
-            // First flip (CRC -> UNCNVNTNL)
             setTimeout(() => flipper.style.transform = 'rotateY(180deg)', 800);
-            
-            // Second flip back (UNCNVNTNL -> CRC/Profile)
             setTimeout(() => {
                 frontImg.src = LOGOS[2];
                 flipper.style.transform = 'rotateY(360deg)';
-                
-                // CRITICAL: Wait for the 800ms flip transition to end before fading in the pill and ring
-                setTimeout(revealStatusEffects, 800);
+                setTimeout(() => applyStatus(currentStatusData.msg, currentStatusData.color), 800);
             }, 1800);
         }
 
@@ -851,15 +751,6 @@
                 window.location.href = url;
             }
         }
-
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-                transitionScreen.classList.remove('active');
-                handle.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                handle.style.transform = `translateX(0px)`;
-                swipeText.style.opacity = 1;
-            }
-        });
 
         window.addEventListener('load', () => {
             lucide.createIcons();
@@ -886,15 +777,11 @@
             const vcard = [
                 "BEGIN:VCARD",
                 "VERSION:3.0",
-                `N:${CONTACT_INFO.lastName};${CONTACT_INFO.firstName};;${CONTACT_INFO.suffix};`,
-                `FN:${CONTACT_INFO.firstName} ${CONTACT_INFO.lastName} ${CONTACT_INFO.suffix}`,
+                `FN:${CONTACT_INFO.firstName} ${CONTACT_INFO.lastName}`,
                 `ORG:${CONTACT_INFO.org}`,
-                `TITLE:${CONTACT_INFO.title}`,
-                `EMAIL;TYPE=WORK,INTERNET:${CONTACT_INFO.email}`,
-                `TEL;TYPE=CELL,VOICE:${CONTACT_INFO.phone}`,
-                `URL;TYPE=WORK:${CONTACT_INFO.web}`,
-                "item1.URL:" + CONTACT_INFO.whatsapp,
-                "item1.X-ABLabel:WhatsApp",
+                `TEL;TYPE=CELL:${CONTACT_INFO.phone}`,
+                `EMAIL:${CONTACT_INFO.email}`,
+                `URL:${CONTACT_INFO.web}`,
                 "END:VCARD"
             ].join("\n");
 
@@ -903,9 +790,7 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = 'CoachChris.vcf';
-            document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
         });
 
         let isDragging = false;
