@@ -686,6 +686,11 @@
                         <i data-lucide="star" class="w-4 h-4 text-[#808a5c]"></i>
                         <span class="text-[9px] font-black uppercase tracking-widest">Success Stories</span>
                     </button>
+                    <!-- FREE COURSE CTA -->
+                    <button id="open-course" class="col-span-2 flex items-center justify-center gap-2 bg-white/50 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 py-4 rounded-2xl border-2 border-[#808a5c] active:scale-[0.96] transition-all">
+                        <i data-lucide="flame" class="w-4 h-4 text-[#808a5c]"></i>
+                        <span class="text-[9px] font-black uppercase tracking-widest">Get my Free 14 Day Fundamentals Course</span>
+                    </button>
                 </div>
 
                 <div class="swipe-track">
@@ -802,6 +807,7 @@
         const testimonialsModal = document.getElementById('testimonials-modal');
         const openQrBtn = document.getElementById('open-qr');
         const openTestimonialsBtn = document.getElementById('open-testimonials');
+        const openCourseBtn = document.getElementById('open-course');
         const saveVcardBtn = document.getElementById('save-vcard');
         const closeQrBtn = document.getElementById('close-qr');
         const closeTestimonialsBtn = document.getElementById('close-testimonials');
@@ -819,14 +825,13 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Only show install fab if user hasn't dismissed it in this session
             if (!sessionStorage.getItem('installDismissed')) {
                 fabInstall.classList.remove('hidden');
             }
         });
 
         fabInstall.addEventListener('click', async (e) => {
-            if (e.target.closest('#dismiss-install')) return; // Ignore if X was clicked
+            if (e.target.closest('#dismiss-install')) return; 
             
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -993,6 +998,11 @@
         closeQrBtn.addEventListener('click', () => qrModal.classList.remove('active'));
         openTestimonialsBtn.addEventListener('click', () => testimonialsModal.classList.add('active'));
         closeTestimonialsBtn.addEventListener('click', () => testimonialsModal.classList.remove('active'));
+        
+        // Navigation for the course button
+        openCourseBtn.addEventListener('click', () => {
+            triggerNavigation(EXTERNAL_URL, true);
+        });
 
         new QRCode(document.getElementById("qrcode"), {
             text: window.location.href,
