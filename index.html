@@ -328,14 +328,12 @@
         }
         .fab:active { transform: scale(0.9); }
 
-        /* Install Notification FAB Styling */
         #fab-install {
             background: var(--olive);
             color: white;
             border-color: white;
             animation: bounce-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        #fab-install i { transform: scale(1); }
         
         .dismiss-x {
             position: absolute;
@@ -411,7 +409,6 @@
             100% { left: 100%; width: 40%; }
         }
 
-        /* Testimonial Slider Styles */
         .testimonial-slider {
             display: flex;
             overflow-x: auto;
@@ -444,7 +441,6 @@
             border-radius: 10px;
         }
 
-        /* Hidden Menu & PIN Styles */
         #pin-input-field {
             background: var(--footer-bg);
             border: 2px solid var(--card-border);
@@ -783,7 +779,7 @@
     <script>
         const EXTERNAL_URL = "https://coachchriscrc.carrd.co";
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXLZhY6w7aWwg5ZjFGoh7T-0xx3WownV46HBKC1iMNqxiOAW8LfbcfqnoXo8YznaaerjeG1_R6vb7c/pub?gid=0&single=true&output=csv";
-        // UPDATED: Points to the editor view of the sheet
+        // Points to the direct edit interface of the sheet
         const HIDDEN_MENU_URL = "https://docs.google.com/spreadsheets/d/1Z0_Tu60EA5kuibQ_3hnAUem2fwT843afJvQ0FICxYKs/edit";
         const SECRET_PIN = "07320";
 
@@ -930,6 +926,8 @@
         closeIframeBtn.addEventListener('click', () => {
             hiddenContainer.classList.remove('active');
             hiddenIframe.src = 'about:blank';
+            // Sync status again after closing editor to see immediate changes
+            updateLiveStatus();
         });
 
         // PWA Install
