@@ -67,6 +67,7 @@
             --text-main: #ffffff;
             --text-muted: #a1a1aa;
             --text-sub: #d4d4d8;
+            --text-ring: #ffffff;
             --ring-bg: #27272a;
             --track-bg: linear-gradient(to right, #27272a, #2c2e26, rgba(128, 138, 92, 0.25));
             --track-border: rgba(128, 138, 92, 0.3);
@@ -692,7 +693,7 @@
 
             <div class="flex flex-col w-full gap-4">
                 <div class="flex flex-col gap-3 w-full">
-                    <!-- High-Ticket Primary Action -->
+                    <!-- High-Ticket Primary Action - Now linked to dedicated LP -->
                     <button id="apply-coaching" class="w-full flex items-center justify-center gap-3 bg-[#808a5c] text-white py-5 rounded-2xl shadow-lg shadow-[#808a5c]/20 active:scale-[0.96] active:bg-[#6d764e] transition-all">
                         <i data-lucide="calendar-check" class="w-5 h-5"></i>
                         <span class="text-[11px] font-black uppercase tracking-widest">Apply for 1-1 Online Coaching</span>
@@ -758,11 +759,10 @@
 
     <script>
         const EXTERNAL_URL = "https://coachchriscrc.carrd.co";
+        // Updated Coaching URL to dedicated landing page
+        const COACHING_LP_URL = "https://coachchriscrc.github.io/oc-lp";
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXLZhY6w7aWwg5ZjFGoh7T-0xx3WownV46HBKC1iMNqxiOAW8LfbcfqnoXo8YznaaerjeG1_R6vb7c/pub?gid=0&single=true&output=csv";
-        
-        // Option 1 URL: Redirection directly to the editable sheet
         const HIDDEN_MENU_URL = "https://docs.google.com/spreadsheets/d/1Z0_Tu60EA5kuibQ_3hnAUem2fwT843afJvQ0FICxYKs/edit";
-        
         const SECRET_PIN = "07320";
 
         const CONTACT_INFO = {
@@ -773,7 +773,6 @@
             email: "Circularrootscoaching@gmail.com",
             web: "https://coachchriscrc.carrd.co",
             whatsapp: "https://wa.me/447925116794",
-            // Optimized title and org for future contact searching (e.g., "fitness coach")
             title: "Online Coach & PT (Fitness, Strength & Longevity)",
             org: "Circular Roots Coaching; TRAIN UNCNVNTNL"
         };
@@ -790,18 +789,13 @@
             try {
                 const response = await fetch(SHEET_URL + '&cache=' + Date.now());
                 if (!response.ok) throw new Error('Sheet not found');
-                
                 const csvData = await response.text();
                 const rows = csvData.split('\n');
-                
                 if (rows.length < 2) return;
-
                 const cols = rows[1].split(',');
                 const message = cols[0] ? cols[0].replace(/"/g, '').trim() : "";
                 const color = cols[1] ? cols[1].replace(/"/g, '').trim().toLowerCase() : "";
-
                 currentStatusData = { msg: message, color: color };
-                
                 if (document.getElementById('splash-screen').classList.contains('fade-out')) {
                     applyStatus(message, color);
                 }
@@ -815,21 +809,17 @@
             const textEl = document.getElementById('status-text');
             const body = document.getElementById('app-body');
             const avatarRing = document.getElementById('avatar-ring');
-            
             if (!msg || msg === "") {
                 badge.classList.remove('visible');
                 avatarRing.classList.remove('glow-active');
                 body.classList.remove('status-green', 'status-amber', 'status-red');
                 return;
             }
-
             textEl.innerText = msg;
             badge.classList.remove('green', 'amber', 'red');
             if (color) badge.classList.add(color);
-            
             body.classList.remove('status-green', 'status-amber', 'status-red');
             if (color) body.classList.add(`status-${color}`);
-
             requestAnimationFrame(() => {
                 badge.classList.add('visible');
                 if (color) avatarRing.classList.add('glow-active');
@@ -864,7 +854,6 @@
         const themeToggle = document.getElementById('theme-toggle');
         const slider = document.getElementById('testimonial-slider');
 
-        // Hidden Menu Logic (Long press 3s on avatar)
         let longPressTimer;
         const avatarTouchStart = (e) => {
             longPressTimer = setTimeout(() => {
@@ -887,14 +876,10 @@
                 if (val === SECRET_PIN) {
                     pinModal.classList.remove('active');
                     pinInput.value = '';
-                    
-                    // Option 1: Full Redirect to the sheet URL
                     window.location.href = HIDDEN_MENU_URL;
                 } else {
                     pinError.style.opacity = '1';
-                    setTimeout(() => {
-                        pinInput.value = '';
-                    }, 500);
+                    setTimeout(() => { pinInput.value = ''; }, 500);
                 }
             }
         });
@@ -905,7 +890,6 @@
             pinError.style.opacity = '0';
         });
 
-        // PWA Install
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -996,7 +980,6 @@
         });
 
         saveVcardBtn.addEventListener('click', () => {
-            // Enhanced vCard with Company and Title for search discoverability
             const vcard = [
                 "BEGIN:VCARD", "VERSION:3.0",
                 `N:${CONTACT_INFO.lastName};${CONTACT_INFO.firstName};;${CONTACT_INFO.suffix};`,
@@ -1054,7 +1037,8 @@
         openTestimonialsBtn.addEventListener('click', () => testimonialsModal.classList.add('active'));
         closeTestimonialsBtn.addEventListener('click', () => testimonialsModal.classList.remove('active'));
         openCourseBtn.addEventListener('click', () => triggerNavigation(EXTERNAL_URL, true));
-        applyCoachingBtn.addEventListener('click', () => triggerNavigation(EXTERNAL_URL, true));
+        // Linked to the new GitHub Pages LP
+        applyCoachingBtn.addEventListener('click', () => triggerNavigation(COACHING_LP_URL, true));
 
         new QRCode(document.getElementById("qrcode"), {
             text: window.location.href, width: 240, height: 240, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
